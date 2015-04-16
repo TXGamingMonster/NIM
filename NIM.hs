@@ -4,23 +4,31 @@ printBoard :: [Int] -> [String]
 printBoard a = map (printLine) a
 
 printLine :: Int -> String
-printLine num = concat ["|" | r <- [0..num]]
+printLine num = concat ["X" | r <- [1..num]]
+
+victory :: Int -> String
+victory x
+	|x == 1 = "YOU WIN"
+	|otherwise = "YOU LOST"
 
 isValidMove :: [Int] -> Int -> Int -> Bool
-isValidMove g row num = ((length g > row -1) && (g!!(row-1) > num))
+isValidMove g row num = ((length g > (row -1)) && (g!!(row-1) >= num))
 
 removeMatch :: [Int] -> Int -> Int -> [Int]
-removeMatch g row num = (take (row-2) g ++ [(g!!(row-1)-num)] ++ drop (row) g)
+removeMatch g row num = (take (row-1) g ++ [(g!!(row-1)-num)] ++ drop (row) g)
 
 --playerTurn :: [Int] -> IO [Int]-> [Int]
 playerTurn g = do
-	putStrLn "Enter row and number of sticks"
-	row <- getLine
-	num <- getLine
-	if(isValidMove g (read row :: Int) (read num :: Int))
+	putStrLn "Enter row"
+	a <- getLine
+	putStrLn "Enter number of sticks"
+	b <- getLine
+	let row = (read a :: Int)
+	let num = (read b :: Int)
+	if(isValidMove g row num)
 		then do
-			let ng = removeMatch g (read row :: Int) (read num :: Int)
-			playGame $ ng 1
+			let ng = removeMatch g row num
+			playGame (ng) 1
 	else do
 		putStrLn "Not Valid Move"
 		playerTurn g
@@ -29,11 +37,10 @@ playGame :: [Int] -> Int -> IO()
 playGame game t = do
 	if (all (==0) game)
 		then do
-			putStrLn "YOU WIN"
+			putStrLn $ victory t
 	else do
 		mapM_ putStrLn $ printBoard game
 		playerTurn game
-		putStrLn "Game Over"
 		
 
 main = do
