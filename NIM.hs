@@ -17,7 +17,7 @@ isValidMove g row num = ((length g > (row -1)) && (g!!(row-1) >= num))
 removeMatch :: [Int] -> Int -> Int -> [Int]
 removeMatch g row num = (take (row-1) g ++ [(g!!(row-1)-num)] ++ drop (row) g)
 
---playerTurn :: [Int] -> IO [Int]-> [Int]
+playerTurn :: [Int] -> IO ()
 playerTurn g = do
 	putStrLn "Enter row"
 	a <- getLine
@@ -39,8 +39,12 @@ playGame game t = do
 		then do
 			putStrLn $ victory t
 	else do
-		mapM_ putStrLn $ printBoard game
-		playerTurn game
+		if (t/= 1)
+			then do
+				mapM_ putStrLn $ printBoard game
+				playerTurn game
+			else do
+				computerTurn game
 		
 
 main = do
