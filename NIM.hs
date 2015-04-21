@@ -44,7 +44,8 @@ playGame game t = do
 				mapM_ putStrLn $ printBoard game
 				playerTurn game
 			else do
-				computerTurn game
+				let ng = computerTurn game
+				playGame ng 0
 		
 
 main = do
