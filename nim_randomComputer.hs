@@ -1,7 +1,29 @@
 module Nim_randomComputer where
 
-computerTurn :: [Int] -> [Int]
-computerTurn g = [0,0,0]
+import System.Random
+
+randomList :: (Random a) => Int -> [a]
+randomList seed = randoms (mkStdGen seed)
+ 
+randomizer s = head (randomList s :: [Int])
+
+converter :: IO Int ->IO String
+converter num = do
+	n <- num
+	return ("" ++ (show n))
+
+--computerTurn :: [Int] -> [Int]
+computerTurn g= do
+	let row = randomRIO (1, (length g))
+	let st = randomRIO (1, 100)
+	a <- converter row
+	b <- converter st
+	if isValidMove g (read a :: Int) (read b :: Int)
+		then do
+			let t = removeMatch g (read a :: Int) (read b :: Int)
+			playGame (t) 0
+	else do
+		computerTurn g
 
 printBoard :: [Int] -> [String]
 printBoard a = map (printLine) a
@@ -14,10 +36,10 @@ victory x
 	|x == 1 = "YOU WIN"
 	|otherwise = "YOU LOST"
 
-isValidMove :: [Int] -> Int -> Int -> Bool
-isValidMove g row num = ((length g > (row -1)) && (g!!(row-1) >= num))
+--isValidMove :: [Int] -> Int -> Int -> Bool
+isValidMove g row num = (num > 0 && (length g > (row -1)) && (g!!(row-1) >= num))
 
-removeMatch :: [Int] -> Int -> Int -> [Int]
+--removeMatch :: [Int] -> Int -> Int -> [Int]
 removeMatch g row num = (take (row-1) g ++ [(g!!(row-1)-num)] ++ drop (row) g)
 
 playerTurn :: [Int] -> IO ()
@@ -47,9 +69,8 @@ playGame game t = do
 				mapM_ putStrLn $ printBoard game
 				playerTurn game
 			else do
-				--let ng = computerTurn game
-				--playGame ng 0
-				putStrLn $ victory t
+				computerTurn game
+				--putStrLn $ victory t
 		
 
 main = do
