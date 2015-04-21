@@ -44,8 +44,10 @@ playGame game t = do
 				mapM_ putStrLn $ printBoard game
 				playerTurn game
 			else do
-				let ng = computerTurn game
-				playGame ng 0
+				mapM_ putStrLn $ printBoard game
+				--let ng = computerTurn game
+				--playGame ng 0
+				putStrLn $ victory t
 		
 
 main = do
